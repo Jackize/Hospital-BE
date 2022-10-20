@@ -47,13 +47,14 @@ let handleEditUser = async (req, res) => {
 };
 
 let handleDeleteUser = async (req, res) => {
-    if (!req.query.id) {
+    let id = req.body.id;
+    if (!id) {
         return res.status(200).json({
             errCode: 1,
             errMessage: 'Missing id',
         });
     }
-    let message = await userService.deleteUser(req.query.id);
+    let message = await userService.deleteUser(id);
     return res.status(200).json(message);
 };
 module.exports = {

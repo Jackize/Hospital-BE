@@ -163,19 +163,23 @@ let editUser = (data) => {
 
 let deleteUser = (id) => {
     return new Promise(async (resolve, reject) => {
-        let user = await db.User.findOne({ where: { id } });
-        if (!user) {
-            resolve({
-                errCode: 2,
-                errMessage: 'User not found',
-            });
+        try {
+            let user = await db.User.findOne({ where: { id } });
+            if (!user) {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'User not found',
+                });
+            } else {
+                await db.User.destroy({ where: { id } });
+                resolve({
+                    errCode: 0,
+                    message: 'User deleted successfully',
+                });
+            }
+        } catch (error) {
+            reject(error);
         }
-        await db.User.destroy({ where: { id } });
-
-        resolve({
-            errCode: 0,
-            message: 'User deleted successfully',
-        });
     });
 };
 module.exports = {
