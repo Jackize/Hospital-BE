@@ -6,14 +6,14 @@ let handleLogin = async (req, res) => {
     if (!email || !password) {
         return res.status(500).json({
             errCode: 1,
-            message: 'Missing inputs parameter!',
+            errMessage: 'Missing inputs parameter!',
         });
     }
 
     let userData = await userService.handleUserLogin(email, password);
     return res.status(200).json({
         errCode: userData.errCode,
-        message: userData.errMessage,
+        errMessage: userData.errMessage,
         user: userData.user ? userData.user : {},
     });
 };
@@ -23,7 +23,7 @@ let handleGetAllUsers = async (req, res) => {
     if (!id) {
         return res.status(200).json({
             errCode: 1,
-            message: 'Missing required',
+            errMessage: 'Missing required',
             users: [],
         });
     }
@@ -50,7 +50,7 @@ let handleDeleteUser = async (req, res) => {
     if (!req.query.id) {
         return res.status(200).json({
             errCode: 1,
-            message: 'Missing id',
+            errMessage: 'Missing id',
         });
     }
     let message = await userService.deleteUser(req.query.id);

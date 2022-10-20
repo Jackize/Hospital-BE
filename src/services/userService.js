@@ -21,7 +21,7 @@ let handleUserLogin = (email, password) => {
                     );
                     if (check) {
                         userData.errCode = 0;
-                        userData.errMessage = 'ok';
+                        userData.message = 'ok';
                         delete user.password;
                         userData.user = user;
                     } else {
@@ -84,28 +84,29 @@ let createNewUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let checkIsEmailExist = await checkUserEmail(data.email);
+            console.log(checkIsEmailExist);
             if (checkIsEmailExist) {
                 resolve({
                     errCode: 1,
-                    message: 'Email already exists',
+                    errMessage: 'Email already exists',
+                });
+            } else {
+                let hassPassWord = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    password: hassPassWord,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    phoneNumber: data.phoneNumber,
+                    gender: data.gender === '1' ? true : false,
+                    roleId: data.roleId,
+                });
+                resolve({
+                    errCode: 0,
+                    message: 'ok',
                 });
             }
-            let hassPassWord = await hashUserPassword(data.password);
-            console.log('not error', data);
-            await db.User.create({
-                email: data.email,
-                password: hassPassWord,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                address: data.address,
-                phoneNumber: data.phoneNumber,
-                gender: data.gender === '1' ? true : false,
-                roleId: data.roleId,
-            });
-            resolve({
-                errCode: 0,
-                message: 'ok',
-            });
         } catch (error) {
             reject(error);
         }
@@ -128,7 +129,7 @@ let editUser = (data) => {
             if (!data.id) {
                 resolve({
                     errCode: 2,
-                    message: 'Missing id',
+                    errMessage: 'Missing id',
                 });
             }
             let user = await db.User.findOne({
@@ -151,7 +152,7 @@ let editUser = (data) => {
             } else {
                 resolve({
                     errCode: 1,
-                    message: 'User not found',
+                    errMessage: 'User not found',
                 });
             }
         } catch (error) {
@@ -166,7 +167,7 @@ let deleteUser = (id) => {
         if (!user) {
             resolve({
                 errCode: 2,
-                message: 'User not found',
+                errMessage: 'User not found',
             });
         }
         await db.User.destroy({ where: { id } });

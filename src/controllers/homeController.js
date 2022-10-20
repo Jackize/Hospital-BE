@@ -20,13 +20,11 @@ export let getCRUD = async (req, res) => {
 
 export let postCRUD = async (req, res) => {
     let message = await createNewUser(req.body);
-    // console.log(message);
     return res.send(message);
 };
 
 export let displayGetCRUD = async (req, res) => {
     let data = await getAllUser();
-    console.log(data);
     return res.send('get data from server');
 };
 
