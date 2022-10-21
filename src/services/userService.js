@@ -84,7 +84,6 @@ let createNewUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let checkIsEmailExist = await checkUserEmail(data.email);
-            console.log(checkIsEmailExist);
             if (checkIsEmailExist) {
                 resolve({
                     errCode: 1,
@@ -131,29 +130,26 @@ let editUser = (data) => {
                     errCode: 2,
                     errMessage: 'Missing id',
                 });
-            }
-            let user = await db.User.findOne({
-                where: { id: data.id },
-                raw: false,
-            });
-            if (user) {
-                user.firstName = data.firstName;
-                user.lastName = data.lastName;
-                user.email = data.email;
-                user.password = data.password;
-                user.address = data.address;
-                user.roleId = data.roleId;
-                user.gender = data.gender;
-                await user.save();
-                resolve({
-                    errCode: 0,
-                    message: 'Update successfully',
-                });
             } else {
-                resolve({
-                    errCode: 1,
-                    errMessage: 'User not found',
+                let user = await db.User.findOne({
+                    where: { id: data.id },
+                    raw: false,
                 });
+                if (user) {
+                    user.firstName = data.firstName;
+                    user.lastName = data.lastName;
+                    user.address = data.address;
+                    await user.save();
+                    resolve({
+                        errCode: 0,
+                        message: 'Update successfully',
+                    });
+                } else {
+                    resolve({
+                        errCode: 1,
+                        errMessage: 'User not found',
+                    });
+                }
             }
         } catch (error) {
             reject(error);
